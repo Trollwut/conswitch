@@ -1,3 +1,5 @@
+**⚠ This tool is in heavy development and not yet ready to use! ⚠**
+
 # conswitch
 
 A script to conveniently switch between several configs.
