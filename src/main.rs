@@ -1,30 +1,45 @@
-extern crate clap;
+extern crate pretty_env_logger;
+#[macro_use] extern crate log;
 
-use clap::{App, Arg, ArgMatches};
+use std::env;
+//use std::path::PathBuf;
+use structopt::StructOpt;
+use log::{info, warn, error};
+
+#[derive(StructOpt, Debug)]
+struct Params {
+    /// Verbose mode (-v, -vv, -vvv are possible)
+    #[structopt(short, long, parse(from_occurrences))]
+    verbose: u8,
+}
 
 fn main() {
 
-    let matches = App::new("conswitch")
-        .version(env!("CARGO_PKG_VERSION"))
-        .about(env!("CARGO_PKG_DESCRIPTION"))
-        .author(env!("CARGO_PKG_AUTHORS"))
-        .arg(
-            Arg::with_name("verbose")
-            .help("guess what")
-            .short("v")
-            .long("verbose")
-        )
-        .get_matches();
+    let params = Params::from_args();
 
-    debug("verbose is set to on!", matches);
+    set_env_log(params);
+    pretty_env_logger::init_custom_env("RUST_APP_LOG");
 
     println!("Nothing to see for now, whoopsie!");
+
+    info!("such information");
+    warn!("o_O");
+    error!("boom");
+    debug!("deboogging");
+
+    // cleanup before exiting
+    env::remove_var("RUST_APP_LOG");
 }
 
-/// Prints out to console, if --verbose has been used
-fn debug(text: &str, matches: ArgMatches) {
-    if matches.is_present("verbose") {
-        println!("{}", text);
+/// depending on the amount of --verbose, this sets the level of logging to console
+fn set_env_log(params: Params) {
+    let envlevel;
+    println!("{}", params.verbose);
+    match params.verbose {
+        0 => envlevel = "error",
+        1 => envlevel = "warn",
+        2 => envlevel = "info",
+        3 | _ => envlevel = "trace",
     }
+    env::set_var("RUST_APP_LOG", envlevel);
 }
-
