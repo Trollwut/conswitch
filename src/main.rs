@@ -1,10 +1,13 @@
 extern crate pretty_env_logger;
 #[macro_use] extern crate log;
+extern crate config;
+extern crate dirs;
 
 use std::env;
 //use std::path::PathBuf;
 use structopt::StructOpt;
 use log::{info, warn, error};
+use config::*;
 
 #[derive(StructOpt, Debug)]
 struct Params {
@@ -19,6 +22,11 @@ fn main() {
 
     set_env_log(params);
     pretty_env_logger::init_custom_env("RUST_APP_LOG");
+
+    let mut config = Config::default();
+    //let mut config_dir: PathBuf = dirs::config_dir();
+
+    //println!("{:?}", dirs::config_dir());
 
     println!("Nothing to see for now, whoopsie!");
 
